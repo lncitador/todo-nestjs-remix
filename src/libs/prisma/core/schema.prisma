@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  avatar    String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  Directory Directory[]
+  Todos     Todos[]
+
+  @@map("users")
+}
+
+model Directory {
+  id        String   @id @default(uuid())
+  name      String
+  userId    String   @map("user_id")
+  User      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  Todos Todos[]
+
+  @@map("directories")
+}
+
+model Todos {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  completed   Boolean   @default(false)
+  important   Boolean   @default(false)
+  dueDate     DateTime  @map("due_date")
+  userId      String    @map("user_id")
+  User        User      @relation(fields: [userId], references: [id])
+  directoryId String    @map("directory_id")
+  Directory   Directory @relation(fields: [directoryId], references: [id])
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @map("updated_at")
+
+  @@map("todos")
+}
