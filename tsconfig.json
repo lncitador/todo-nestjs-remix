@@ -9,6 +9,7 @@
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
+    "strictPropertyInitialization": false,
     "incremental": true,
     "strict": true,
     "baseUrl": "./",
