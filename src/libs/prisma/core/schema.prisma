@@ -5,6 +5,36 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator zod {
+  provider = "nestjs-zod-prisma"
+  output   = "../../zod/schemas" // (default) the directory where generated zod schemas will be saved
+
+  relationModel = false // (default) Create and export both plain and related models.
+  // relationModel         = "default" // Do not export model without relations.
+  // relationModel         = false // Do not generate related model
+
+  generateDto = true // (default) Generate DTOs for NestJS
+
+  modelCase = "PascalCase" // (default) Output models using pascal case (ex. UserModel, PostModel)
+  // modelCase             = "camelCase" // Output models using camel case (ex. userModel, postModel)
+
+  modelSuffix = "Model" // (default) Suffix to apply to your prisma models when naming Zod schemas
+
+  dtoCase = "PascalCase" // (default) Output DTOs using pascal case (ex. UserDto, PostDto)
+  // dtoCase             = "camelCase" // Output DTOs using camel case (ex. userDto, postDto)
+
+  dtoSuffix = "Dto" // (default) Suffix to apply to your prisma models when naming DTOs
+
+  // useDecimalJs          = false // (default) represent the prisma Decimal type using as a JS number
+  useDecimalJs = true // represent the prisma Decimal type using Decimal.js (as Prisma does)
+
+  imports = "../../zod/helpers" // (default) will import the referenced file in generated schemas to be used via imports.someExportedVariable
+
+  // https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-by-null-values
+  prismaJsonNullability = false // (default) uses prisma's scheme for JSON field nullability
+  // prismaJsonNullability = false // allows null assignment to optional JSON fields
+}
+
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
@@ -13,8 +43,8 @@ datasource db {
 model User {
   id        String   @id @default(uuid())
   name      String
-  email     String   @unique
-  password  String
+  email     String   @unique /// @z.string().email()
+  password  String /// @z.string().min(8)
   avatar    String?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
