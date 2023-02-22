@@ -1,30 +1,27 @@
-import * as path from 'path';
-import { RemixModule } from 'nest-remix';
-import { HelloWorldBackend } from './app/routes/hello-world.server';
-import { DynamicModule, Global } from '@nestjs/common';
-import { SessionProvider } from './modules/authenticator/domain/providers/session';
+import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
+import { SessionConfig } from './modules/authenticator/domain/providers/session.provider';
 import { InfrastructureModule } from './shared/infrastructure/container.module';
 import { AuthenticatorModule } from './modules/authenticator/authenticator.module';
 
 @Global()
-@RemixModule({
-  publicDir: path.join(process.cwd(), 'public'),
-  browserBuildDir: path.join(process.cwd(), 'build/'),
+@Module({
   imports: [InfrastructureModule, AuthenticatorModule],
-  controllers: [],
-  providers: [HelloWorldBackend],
-  // exports: [InfrastructureModule],
 })
 export class ApplicationModule {
   public static register({
     session,
   }: {
-    session: SessionProvider;
+    session: SessionConfig;
   }): DynamicModule {
+    const sessionConfig: Provider = {
+      provide: SessionConfig,
+      useValue: session,
+    };
+
     return {
       module: ApplicationModule,
-      providers: [{ provide: SessionProvider, useValue: session }],
-      exports: [{ provide: SessionProvider, useValue: session }],
+      providers: [sessionConfig],
+      exports: [sessionConfig],
     };
   }
 }

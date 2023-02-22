@@ -7,10 +7,9 @@ import { Module } from '@nestjs/common';
       isGlobal: true,
       useFactory: () => ({
         prismaOptions: {
-          log: ['query', 'info', 'warn'],
+          log: ['warn'],
         },
       }),
-      inject: [],
     }),
   ],
 })

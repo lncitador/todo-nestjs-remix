@@ -1,7 +1,7 @@
 import { DataFunctionArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { Inject } from '@nestjs/common';
-import { AuthenticatorProvider } from '../../domain/providers/authenticator';
+import { AuthenticatorProvider } from '../../domain/providers/authenticator.provider';
 import { SessionAuthenticator } from '../services/session-authenticator.service';
 
 const authenticatorKey = Symbol('authenticator');

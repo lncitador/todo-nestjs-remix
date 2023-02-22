@@ -1,6 +1,7 @@
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { Form, useActionData, useLoaderData } from '@remix-run/react';
 import { wireAction, wireLoader } from 'nest-remix/core.server';
+import { Theme, useTheme } from '../utils/theme-provider';
 import { HelloWorldBackend } from './hello-world.server';
 
 export const loader: LoaderFunction = (args) =>
@@ -15,9 +16,18 @@ export default function HelloWorld() {
     HelloWorldBackend['setMessage'] | HelloWorldBackend['setMessageFallback']
   >();
 
+  const [, setTheme] = useTheme();
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) =>
+      prevTheme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT,
+    );
+  };
+
   return (
     <div style={{ fontFamily: 'system-ui, sans-serif', lineHeight: '1.4' }}>
       <h1>Welcome to Remix</h1>
+      <button onClick={toggleTheme}>Toggle</button>
       <div style={{ marginTop: 20 }}>{actionData?.newMessage || message}</div>
       <fieldset style={{ marginTop: 20 }}>
         <legend>Update the message</legend>
