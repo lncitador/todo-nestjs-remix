@@ -21,7 +21,7 @@ export const Authenticated = (): MethodDecorator => {
       const authenticator: SessionAuthenticator = (this as any)[
         authenticatorKey
       ];
-      const isAuthenticated = await authenticator.isAuthenticated();
+      const isAuthenticated = await authenticator.isAuthenticated(''); // Todo: get cookie header
 
       if (!isAuthenticated) throw redirect('/login');
       return originalMethod.apply(this, [args]);

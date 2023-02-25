@@ -44,7 +44,7 @@ model User {
   id        String   @id @default(uuid())
   name      String
   email     String   @unique /// @z.string().email()
-  password  String /// @z.string().min(8)
+  password  String /// @z.string().min(8, 'Password must be at least 8 characters').regex(/[a-z]/, 'Password must contain at least one lowercase letter').regex(/[A-Z]/, 'Password must contain at least one uppercase letter').regex(/[0-9]/, 'Password must contain at least one number').regex(/[^a-zA-Z0-9]/, 'Password must contain at least one special character')
   avatar    String?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")

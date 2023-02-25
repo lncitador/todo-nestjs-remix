@@ -1,6 +1,6 @@
-import * as z from 'nestjs-zod/z';
-import { createZodDto } from 'nestjs-zod/dto';
-import * as imports from '../helpers';
+import * as z from "nestjs-zod/z"
+import { createZodDto } from "nestjs-zod/dto"
+import * as imports from "../helpers"
 
 export const TodosModel = z.object({
   id: z.string(),
@@ -13,6 +13,7 @@ export const TodosModel = z.object({
   directoryId: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
-});
+})
 
-export class TodosDto extends createZodDto(TodosModel) {}
+export class TodosDto extends createZodDto(TodosModel) {
+}

@@ -13,9 +13,10 @@ import {
   ThemeHead,
   ThemeBody,
   ThemeProvider,
-} from './utils/theme-provider';
+} from './contexts/theme';
 import { getThemeSession } from './utils/theme.server';
 import tailwindcss from './tailwind.css';
+import clsx from 'clsx';
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
@@ -40,13 +41,13 @@ function App() {
   const [theme] = useTheme();
 
   return (
-    <html lang="en" className={theme ?? ''}>
+    <html lang="en" className={clsx(theme)}>
       <head>
         <Meta />
         <Links />
         <ThemeHead ssrTheme={Boolean(data.theme)} />
       </head>
-      <body>
+      <body className="min-h-screen text-xs bg-slate-200 text-slate-600 dark:bg-slate-900 dark:text-slate-400 xl:text-base sm:text-sm">
         <Outlet />
         <ThemeBody ssrTheme={Boolean(data.theme)} />
         <ScrollRestoration />

@@ -2,6 +2,7 @@ import { Either } from '../logic';
 import { BaseEntity } from './entity';
 
 export type CreateData<T> = Omit<T, keyof BaseEntity>;
+export type UpdateData<T> = Partial<Omit<T, keyof BaseEntity>>;
 
 export abstract class BaseRepository<T extends BaseEntity, R = Error> {
   public abstract create<L = R, A = T>(
@@ -10,7 +11,7 @@ export abstract class BaseRepository<T extends BaseEntity, R = Error> {
 
   public abstract update<L, A = T>(
     id: string,
-    data: Partial<T>,
+    data: UpdateData<T>,
   ): Promise<Either<L, A>>;
 
   public abstract getById<L, A = T>(id: string): Promise<Either<L, A>>;

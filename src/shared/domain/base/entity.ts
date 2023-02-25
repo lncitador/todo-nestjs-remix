@@ -5,12 +5,13 @@
  */
 
 import { randomUUID } from 'crypto';
+import { Maybe } from '../logic';
 import { BaseRepository } from './repository';
 
 export abstract class BaseEntity {
   public abstract id: string;
-  public abstract createdAt?: Date;
-  public abstract updatedAt?: Date;
+  public abstract createdAt: Maybe<Date>;
+  public abstract updatedAt: Maybe<Date>;
 
   protected generateId(): string {
     return randomUUID();

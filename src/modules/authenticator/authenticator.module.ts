@@ -1,9 +1,20 @@
 import { Module } from '@nestjs/common';
-import { SessionAuthenticator } from './infrastructure/services/session-authenticator.service';
-import { SessionManager } from './infrastructure/services/session-manager.service';
+import { authenticatorProvider, sessionProvider } from './provider';
+import { SignInBackend } from './server/sign-in.server';
+import { SignUpBackend } from './server/sign-up.server';
 
 @Module({
-  providers: [SessionAuthenticator, SessionManager],
-  exports: [],
+  providers: [
+    authenticatorProvider,
+    sessionProvider,
+    SignInBackend,
+    SignUpBackend,
+  ],
+  exports: [
+    authenticatorProvider,
+    sessionProvider,
+    SignInBackend,
+    SignUpBackend,
+  ],
 })
 export class AuthenticatorModule {}
