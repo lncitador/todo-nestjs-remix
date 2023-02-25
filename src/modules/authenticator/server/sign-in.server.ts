@@ -64,12 +64,12 @@ export class SignInBackend {
     let cookieHeader = request.headers.get('Cookie');
     const session = await this.sessionManager.get(cookieHeader);
 
-    session.set('userId', user.value);
+    session.set('userId', user.value.id);
     session.set('sessionId', randomUUID());
 
     cookieHeader = await this.sessionManager.commit(session);
 
-    return redirect('/tasks', {
+    return redirect('/', {
       status: 303,
       headers: {
         'Set-Cookie': cookieHeader,

@@ -5,16 +5,23 @@ import { InfrastructureModule } from './shared/infrastructure/container.module';
 import { AuthenticatorModule } from './modules/authenticator/authenticator.module';
 import { UsersModule } from './modules/users/users.module';
 import { RemixModule } from 'nest-remix';
-import { SortTasksBackend } from './app/routes/__private/tasks/($id).$sort.server';
 import { SetThemeBackend } from './shared/infrastructure/server/set-theme.server';
+import { TasksModule } from './modules/tasks/tasks.module';
+import { DirectoryModule } from './modules/directories/directory.module';
 
 @Global()
 @RemixModule({
-  imports: [InfrastructureModule, UsersModule, AuthenticatorModule],
+  imports: [
+    InfrastructureModule,
+    UsersModule,
+    AuthenticatorModule,
+    DirectoryModule,
+    TasksModule,
+  ],
   publicDir: path.join(process.cwd(), 'public'),
   browserBuildDir: path.join(process.cwd(), 'build/'),
-  providers: [SetThemeBackend, SortTasksBackend],
-  exports: [AuthenticatorModule, UsersModule],
+  providers: [SetThemeBackend],
+  exports: [AuthenticatorModule, UsersModule, DirectoryModule],
 })
 export class ApplicationModule {
   public static register({

@@ -2,7 +2,10 @@ import { Prisma } from '~/libs/prisma';
 import { TaskEntity } from '~/modules/tasks/domain/entities/task.entity';
 import { CreateTaskError } from '~/modules/tasks/domain/errors/create-task.error';
 import { TaskNotFoundError } from '~/modules/tasks/domain/errors/task-not-found.error';
-import { ITasksRepository } from '~/modules/tasks/domain/repositories/tasks.repository';
+import {
+  FindTasksByUserId,
+  ITasksRepository,
+} from '~/modules/tasks/domain/repositories/tasks.repository';
 import { CreateData, UpdateData } from '~/shared/domain/base/repository';
 import { Either, left, right } from '~/shared/domain/logic';
 import { PrismaRepository } from '~/shared/infrastructure/database/prisma/repositories/prisma.repository';
@@ -11,6 +14,23 @@ export class TasksPrismaRepository
   extends PrismaRepository
   implements ITasksRepository
 {
+  public async findByUserId({
+    userId,
+    directoryId,
+  }: FindTasksByUserId): Promise<Either<Error, TaskEntity[]>> {
+    try {
+      const tasks = await this.prisma.todos
+        .findMany({
+          where: { userId, directoryId },
+        })
+        .then((tasks) => TaskEntity.from(tasks));
+
+      return right(tasks);
+    } catch {
+      return left(new TaskNotFoundError(userId));
+    }
+  }
+
   public async create<
     L = Prisma.PrismaClientKnownRequestError | CreateTaskError,
     A = TaskEntity,
@@ -37,7 +57,7 @@ export class TasksPrismaRepository
     A = TaskEntity,
   >(id: string, data: UpdateData<TaskEntity>): Promise<Either<L, A>> {
     try {
-      const task = await this.getById(id);
+      const task = await this.findById(id);
 
       if (task.isLeft()) return task as Either<L, A>;
 
@@ -54,7 +74,7 @@ export class TasksPrismaRepository
     }
   }
 
-  public async getById<
+  public async findById<
     L = Prisma.PrismaClientKnownRequestError | TaskNotFoundError,
     A = TaskEntity,
   >(id: string): Promise<Either<L, A>> {
@@ -77,9 +97,11 @@ export class TasksPrismaRepository
     }
   }
 
-  public async getAll<L, A = TaskEntity[]>(): Promise<Either<L, A>> {
+  public async findMany<L, A = TaskEntity[]>(): Promise<Either<L, A>> {
     try {
-      const tasks = await this.prisma.todos.findMany();
+      const tasks = await this.prisma.todos
+        .findMany()
+        .then((tasks) => TaskEntity.from(tasks));
 
       return right(tasks as A);
     } catch (error) {
@@ -89,7 +111,7 @@ export class TasksPrismaRepository
 
   public async delete<L, A = void>(id: string): Promise<Either<L, A>> {
     try {
-      const task = await this.getById(id);
+      const task = await this.findById(id);
 
       if (task.isLeft()) return task as Either<L, A>;
 

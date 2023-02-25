@@ -17,7 +17,7 @@ export class PublicLayoutBackend {
     );
 
     if (isAuthenticated) {
-      return redirect('/tasks');
+      return redirect('/');
     }
 
     return json({

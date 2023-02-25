@@ -2,7 +2,7 @@ import { Disclosure, RadioGroup } from '@headlessui/react';
 import { useLoaderData, useSearchParams } from '@remix-run/react';
 import { CaretRight } from 'phosphor-react';
 import React from 'react';
-import { CreateDirectory } from '../Modals/CreateDirectory';
+import { CreateDirectoryModal } from '../Modals/CreateDirectoryModal';
 import { DeleteDirectoryModal } from '../Modals/DeleteDirectoryModal';
 import { EditDirectoryModal } from '../Modals/EditDirectoryModal';
 
@@ -134,7 +134,7 @@ export const Directories: React.FC = () => {
                 ))}
               </div>
             </RadioGroup>
-            <CreateDirectory />
+            <CreateDirectoryModal />
           </Disclosure.Panel>
         </div>
       )}

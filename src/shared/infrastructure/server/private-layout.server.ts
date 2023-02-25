@@ -17,5 +17,9 @@ export class PrivateLayoutBackend {
     if (!isAuthenticated) {
       return redirect('/sign-in');
     }
+
+    return {
+      isAuthenticated,
+    };
   }
 }

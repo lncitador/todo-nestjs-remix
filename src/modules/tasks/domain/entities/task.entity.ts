@@ -41,8 +41,6 @@ export class TaskEntity extends BaseEntity implements TaskEntityProps {
     this.directoryId = props.directoryId;
     this.createdAt = props.createdAt || new Date();
     this.updatedAt = props.updatedAt || new Date();
-
-    Object.freeze(this);
   }
 
   public static create(props: TaskEntityProps): Either<Error, TaskEntity> {
@@ -66,5 +64,15 @@ export class TaskEntity extends BaseEntity implements TaskEntityProps {
         ),
       );
     }
+  }
+
+  public static from(props: TaskEntityProps): TaskEntity;
+  public static from(props: TaskEntityProps[]): TaskEntity[];
+  public static from(props: TaskEntityProps | TaskEntityProps[]) {
+    if (Array.isArray(props)) {
+      return props.map((prop) => new TaskEntity(prop));
+    }
+
+    return new TaskEntity(props);
   }
 }

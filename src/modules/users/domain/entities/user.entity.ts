@@ -32,8 +32,6 @@ export class UserEntity extends BaseEntity implements UserEntityProps {
     this.avatar = props.avatar;
     this.createdAt = props.createdAt || new Date();
     this.updatedAt = props.updatedAt || new Date();
-
-    Object.freeze(this);
   }
 
   public static create(
@@ -59,5 +57,15 @@ export class UserEntity extends BaseEntity implements UserEntityProps {
         ),
       );
     }
+  }
+
+  public static from(props: UserEntityProps): UserEntity;
+  public static from(props: UserEntityProps[]): UserEntity[];
+  public static from(props: UserEntityProps | UserEntityProps[]) {
+    if (Array.isArray(props)) {
+      return props.map((item) => new UserEntity(item));
+    }
+
+    return new UserEntity(props);
   }
 }

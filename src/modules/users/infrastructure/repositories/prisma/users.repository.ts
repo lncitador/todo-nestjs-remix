@@ -56,7 +56,7 @@ export class UsersPrismaRepository
     A = UserEntity,
   >(id: string, data: UpdateData<UserEntity>): Promise<Either<L, A>> {
     try {
-      const user = await this.getById(id);
+      const user = await this.findById(id);
 
       if (user.isLeft()) return user as Either<L, A>;
 
@@ -73,7 +73,7 @@ export class UsersPrismaRepository
     }
   }
 
-  public async getById<
+  public async findById<
     L = Prisma.PrismaClientKnownRequestError | UserNotFound,
     A = UserEntity,
   >(id: string): Promise<Either<L, A>> {
@@ -96,9 +96,11 @@ export class UsersPrismaRepository
     }
   }
 
-  public async getAll<L, A = UserEntity[]>(): Promise<Either<L, A>> {
+  public async findMany<L, A = UserEntity[]>(): Promise<Either<L, A>> {
     try {
-      const users = await this.prisma.user.findMany();
+      const users = await this.prisma.user
+        .findMany()
+        .then((users) => UserEntity.from(users));
 
       return right(users as A);
     } catch (error) {
@@ -108,7 +110,7 @@ export class UsersPrismaRepository
 
   public async delete<L, A = void>(id: string): Promise<Either<L, A>> {
     try {
-      const user = await this.getById(id);
+      const user = await this.findById(id);
 
       if (user.isLeft()) return user as Either<L, A>;
 

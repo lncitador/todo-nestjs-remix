@@ -52,7 +52,7 @@ export class InMemoryRepository<
 
     return left(new Error('Registro não encontrado') as any);
   }
-  public async getById<L, A = TDto>(id: string): Promise<Either<L, A>> {
+  public async findById<L, A = TDto>(id: string): Promise<Either<L, A>> {
     const entity = this.inmemoryData.find((item) => item.id === id);
 
     if (entity) {
@@ -61,7 +61,7 @@ export class InMemoryRepository<
 
     return left(new Error('Registro não encontrado') as any);
   }
-  public async getAll<L, A = TDto[]>(): Promise<Either<L, A>> {
+  public async findMany<L, A = TDto[]>(): Promise<Either<L, A>> {
     return right(this.inmemoryData as any);
   }
   public async delete<L, A = void>(id: string): Promise<Either<L, A>> {

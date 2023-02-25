@@ -1,31 +1,20 @@
 import { Dialog } from '@headlessui/react';
-import { Form } from '@remix-run/react';
+import { useFetcher } from '@remix-run/react';
 import { Plus, X } from 'phosphor-react';
 import React from 'react';
 import { InputField } from '../FormFields';
 
-export const CreateDirectory: React.FC = () => {
+export const CreateDirectoryModal: React.FC = () => {
   const [open, setOpen] = React.useState(false);
-
-  //   const { mutate } = trpc.directories.create.useMutation();
-
-  //   const methods = useForm<{ name: string }>();
+  const fetcher = useFetcher();
 
   const toggle = () => setOpen((prev) => !prev);
 
-  //   const handleSubmit = methods.handleSubmit((data) => {
-  //     mutate(data, {
-  //       onSuccess: () => {
-  //         const queryKey = trpc.directories.list.getQueryKey();
-
-  //         toast.success('Your directory as sucessful created!');
-  //         queryClient.invalidateQueries(queryKey);
-
-  //         toggle();
-  //       },
-  //       onError: useErrorHandler(methods.setError),
-  //     });
-  //   });
+  React.useEffect(() => {
+    if (fetcher.type === 'done') {
+      toggle();
+    }
+  }, [fetcher.type]);
 
   return (
     <React.Fragment>
@@ -43,9 +32,10 @@ export const CreateDirectory: React.FC = () => {
       <Dialog open={open} onClose={toggle} className="relative z-30">
         <Dialog.Overlay className="fixed inset-0 bg-black/[.2]" />
         <Dialog.Panel className="fixed transform -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2">
-          <Form
+          <fetcher.Form
             method="post"
             className="w-full p-5 bg-white rounded-md shadow-lg dark:bg-slate-800"
+            action="/directories"
           >
             <Dialog.Title className="text-xl font-medium text-gray-900 dark:text-slate-200">
               Create a new directory
@@ -79,7 +69,7 @@ export const CreateDirectory: React.FC = () => {
                 Create
               </button>
             </div>
-          </Form>
+          </fetcher.Form>
         </Dialog.Panel>
       </Dialog>
     </React.Fragment>

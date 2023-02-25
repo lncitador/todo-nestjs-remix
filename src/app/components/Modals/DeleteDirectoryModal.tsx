@@ -1,11 +1,12 @@
 import { Dialog } from '@headlessui/react';
-import { Form } from '@remix-run/react';
+import { useFetcher } from '@remix-run/react';
 import { Trash, X } from 'phosphor-react';
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 export const DeleteDirectoryModal: React.FC = () => {
-  const [searchParam, setSearchParam] = useSearchParams();
+  const [searchParam] = useSearchParams();
+  const fetcher = useFetcher();
 
   const [open, setOpen] = React.useState(false);
 
@@ -15,34 +16,6 @@ export const DeleteDirectoryModal: React.FC = () => {
     setOpen((prev) => !prev);
   }
 
-  //   const { mutate } = trpc.directories.delete.useMutation();
-
-  //   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-  //     event.preventDefault();
-
-  //     mutate(
-  //       { id: directoryId! },
-  //       {
-  //         onSuccess: () => {
-  //           searchParam.delete('directoryId');
-  //           toast.success('Directory deleted successfully');
-
-  //           queryClient.invalidateQueries(trpc.directories.list.getQueryKey());
-  //           queryClient.invalidateQueries(trpc.todos.getByUser.getQueryKey());
-
-  //           setOpen(false);
-
-  //           setSearchParam((prev) => {
-  //             prev.delete('directoryId');
-
-  //             return prev;
-  //           });
-  //         },
-  //         onError: useErrorHandler(),
-  //       },
-  //     );
-  //   };
-
   return (
     <React.Fragment>
       <button onClick={toggle} aria-label="Delete" className="ml-2">
@@ -51,8 +24,9 @@ export const DeleteDirectoryModal: React.FC = () => {
       <Dialog open={open} onClose={toggle} className="relative z-30">
         <Dialog.Overlay className="fixed inset-0 bg-black/[.2]" />
         <Dialog.Panel className="fixed w-1/3 transform -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2">
-          <Form
+          <fetcher.Form
             method="delete"
+            action={`/directories/${directoryId}`}
             className="w-full p-5 bg-white rounded-md shadow-lg dark:bg-slate-800"
           >
             <Dialog.Title className="text-xl font-medium text-gray-900 dark:text-slate-200">
@@ -80,7 +54,7 @@ export const DeleteDirectoryModal: React.FC = () => {
                 Delete
               </button>
             </div>
-          </Form>
+          </fetcher.Form>
         </Dialog.Panel>
       </Dialog>
     </React.Fragment>

@@ -14,9 +14,9 @@ export abstract class BaseRepository<T extends BaseEntity, R = Error> {
     data: UpdateData<T>,
   ): Promise<Either<L, A>>;
 
-  public abstract getById<L, A = T>(id: string): Promise<Either<L, A>>;
+  public abstract findById<L, A = T>(id: string): Promise<Either<L, A>>;
 
-  public abstract getAll<L, A = T[]>(): Promise<Either<L, A>>;
+  public abstract findMany<L, A = T[]>(): Promise<Either<L, A>>;
 
   public abstract delete<L, A = void>(id: string): Promise<Either<L, A>>;
 
