@@ -69,7 +69,7 @@ export class SignInBackend {
 
     cookieHeader = await this.sessionManager.commit(session);
 
-    return redirect('/dashboard', {
+    return redirect('/tasks', {
       status: 303,
       headers: {
         'Set-Cookie': cookieHeader,

@@ -9,6 +9,8 @@ export class PrivateLayoutBackend {
 
   @Loader()
   public async getLayoutData(@RemixArgs() { request }: LoaderArgs) {
+    const path = request.url;
+    console.log('path', path);
     const cookieHeader = request.headers.get('Cookie');
     console.log('cookieHeader', cookieHeader);
     const isAuthenticated = await this.authenticatorManager.isAuthenticated(
@@ -20,7 +22,5 @@ export class PrivateLayoutBackend {
     if (!isAuthenticated) {
       return redirect('/sign-in');
     }
-
-    return redirect('/tasks');
   }
 }

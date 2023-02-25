@@ -5,7 +5,7 @@ import { InfrastructureModule } from './shared/infrastructure/container.module';
 import { AuthenticatorModule } from './modules/authenticator/authenticator.module';
 import { UsersModule } from './modules/users/users.module';
 import { RemixModule } from 'nest-remix';
-import { SortTasksBackend } from './app/routes/tasks/($id).$sort.server';
+import { SortTasksBackend } from './app/routes/__private/tasks/($id).$sort.server';
 import { SetThemeBackend } from './shared/infrastructure/server/set-theme.server';
 
 @Global()

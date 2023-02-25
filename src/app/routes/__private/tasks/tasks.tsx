@@ -1,8 +1,7 @@
-import { json } from '@remix-run/node';
 import React from 'react';
+import { NewTaskModal } from '~/app/components/Modals/NewTaskModal';
+import { StoreProvider } from '~/app/contexts/store';
 import { SideNav, Main, Aside } from '~/app/templates';
-import { NewTaskModal } from '../components/Modals/NewTaskModal';
-import { StoreProvider } from '../contexts/store';
 
 const TasksLayout: React.FC = () => {
   return (
