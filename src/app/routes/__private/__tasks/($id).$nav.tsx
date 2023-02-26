@@ -15,10 +15,12 @@ const NavTasks: React.FC = () => {
   const { task, tasks } = useLoaderData<DataFunction>();
 
   if (task) {
-    <React.Fragment>
-      <ListTasks tasks={[task]} />
-      <Outlet />
-    </React.Fragment>;
+    return (
+      <React.Fragment>
+        <ListTasks tasks={[task]} />
+        <Outlet />
+      </React.Fragment>
+    );
   }
 
   return (

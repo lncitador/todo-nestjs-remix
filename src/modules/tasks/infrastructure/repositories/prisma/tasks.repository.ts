@@ -210,7 +210,10 @@ export class TasksPrismaRepository
     A = TaskEntity,
   >(id: string): Promise<Either<L, A>> {
     try {
-      const taskExist = await this.prisma.todos.findUnique({ where: { id } });
+      const taskExist = await this.prisma.todos.findUnique({
+        where: { id },
+        include: { Directory: true },
+      });
 
       if (!taskExist) {
         return left(new TaskNotFoundError(id) as L);

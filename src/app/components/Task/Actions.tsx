@@ -81,9 +81,7 @@ export const Actions: React.FC<ActionsProps> = ({ task, index, listView }) => {
       </button>
       <NavLink
         to={{
-          pathname: `${location.pathname === '/' ? 'all' : location.pathname}/${
-            task.id
-          }/edit`,
+          pathname: `/${task.id}/edit`,
           search: location.search,
         }}
         title="More options"

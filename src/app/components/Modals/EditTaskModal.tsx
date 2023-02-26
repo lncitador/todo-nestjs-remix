@@ -1,9 +1,8 @@
 import { Dialog } from '@headlessui/react';
-import { Form, useLocation, useParams } from '@remix-run/react';
+import { Form, useLocation, useNavigate, useParams } from '@remix-run/react';
 import { useTypedLoaderData as useLoaderData } from 'remix-typedjson';
 import { X } from 'phosphor-react';
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '../Button';
 // import { toast } from 'react-toastify';
 import {
@@ -12,15 +11,14 @@ import {
   SelectField,
   CheckboxField,
 } from '../FormFields';
-import { LoadingBatchTasksBackend } from '~/modules/tasks/server/loading-batch-tasks.server';
+import { TaskByIdBackend } from '~/modules/tasks/server/task-by-id.server';
 
 export const EditTaskModal: React.FC = () => {
   const params = useParams();
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
 
-  const { tasks, directories } =
-    useLoaderData<LoadingBatchTasksBackend['load']>();
+  const { task, directories } = useLoaderData<TaskByIdBackend['load']>();
 
   //   const { data: task } = trpc.todos.getById.useQuery({ id: params.id! });
   //   const { data: directories } = trpc.directories.list.useQuery();
@@ -54,22 +52,9 @@ export const EditTaskModal: React.FC = () => {
   //     }),
   //   );
 
-  //   useEffect(() => {
-  //     if (!open && task && directories) {
-  //       methods.setValue('id', task.id);
-  //       methods.setValue('title', task.title);
-  //       methods.setValue('description', task.description);
-  //       methods.setValue('directoryId', task.directoryId);
-  //       methods.setValue('completed', task.completed);
-  //       methods.setValue('important', task.important);
-
-  //       const dueDate = task.dueDate.toISOString().split('T')[0];
-
-  //       methods.setValue('dueDate', dueDate);
-
-  //       setOpen(true);
-  //     }
-  //   }, [task, directories, open]);
+  useEffect(() => {
+    setOpen(true);
+  }, []);
 
   return (
     <Dialog
@@ -91,18 +76,21 @@ export const EditTaskModal: React.FC = () => {
             label="Title"
             placeholder="e.g, study for the test"
             fullWidth
+            defaultValue={task.title}
           />
           <InputField
             name="dueDate"
             label="Date"
             placeholder="e.g, 2021-12-31"
             type="date"
+            defaultValue={task.dueDate.toISOString().split('T')[0]}
             fullWidth
           />
           <TextAreaField
             name="description"
             label="Description (optional)"
             placeholder="e.g, study for the test"
+            defaultValue={task.description ?? ''}
             fullWidth
           />
           <SelectField
@@ -110,6 +98,7 @@ export const EditTaskModal: React.FC = () => {
             label="Select a directory"
             placeholder="e.g, study for the test"
             fullWidth
+            defaultValue={task.directoryId}
             options={
               directories?.map((directory) => ({
                 value: directory.id,
@@ -121,11 +110,13 @@ export const EditTaskModal: React.FC = () => {
             name="important"
             label="Mark as important"
             className="mb-4"
+            defaultChecked={task.important}
           />
           <CheckboxField
             name="completed"
             label="Mark as completed"
             className="mb-4"
+            defaultChecked={task.completed}
           />
 
           <Button type="submit" className="w-full">
