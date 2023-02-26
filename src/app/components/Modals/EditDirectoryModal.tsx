@@ -1,5 +1,6 @@
 import { Dialog } from '@headlessui/react';
-import { useFetcher, useLoaderData, useSearchParams } from '@remix-run/react';
+import { useFetcher, useSearchParams } from '@remix-run/react';
+import { useTypedLoaderData as useLoaderData } from 'remix-typedjson';
 import { NotePencil, X } from 'phosphor-react';
 import React from 'react';
 import { LoadingBatchTasksBackend } from '~/modules/tasks/server/loading-batch-tasks.server';

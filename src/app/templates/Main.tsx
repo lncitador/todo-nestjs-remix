@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, useLocation, useSearchParams } from 'react-router-dom';
+import { Outlet, useLocation, useSearchParams } from '@remix-run/react';
 import { useStore } from '../hooks/useStore';
 import { links } from '../utils/links';
 import { Header } from './Header';

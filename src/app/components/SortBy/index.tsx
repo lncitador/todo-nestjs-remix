@@ -1,4 +1,5 @@
 import { Listbox, Transition } from '@headlessui/react';
+import { useSearchParams } from '@remix-run/react';
 import { CaretDown, Check } from 'phosphor-react';
 import React from 'react';
 import { useStore } from '~/app/hooks/useStore';
@@ -6,6 +7,19 @@ import { sortList } from '~/app/utils/sort-list';
 
 export const SortBy: React.FC = () => {
   const [sortBy, toggle] = useStore((state) => state.useSortBy);
+  const [, setSeachParam] = useSearchParams();
+
+  React.useEffect(() => {
+    setSeachParam((params) => {
+      if (sortBy.value === 'order-added') {
+        params.delete('sort');
+        return params;
+      }
+
+      params.set('sort', sortBy.value);
+      return params;
+    });
+  }, [sortBy]);
 
   return (
     <Listbox value={sortBy} onChange={toggle}>

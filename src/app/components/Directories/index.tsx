@@ -1,18 +1,19 @@
 import { Disclosure, RadioGroup } from '@headlessui/react';
-import { useLoaderData, useSearchParams } from '@remix-run/react';
+import { useSearchParams } from '@remix-run/react';
+import { useTypedLoaderData as useLoaderData } from 'remix-typedjson';
 import { CaretRight } from 'phosphor-react';
 import React from 'react';
 import { CreateDirectoryModal } from '../Modals/CreateDirectoryModal';
 import { DeleteDirectoryModal } from '../Modals/DeleteDirectoryModal';
 import { EditDirectoryModal } from '../Modals/EditDirectoryModal';
+import { LoadingBatchTasksBackend } from '~/modules/tasks/server/loading-batch-tasks.server';
 
 export const Directories: React.FC = () => {
   const [searchParam, setSearchParam] = useSearchParams();
   const [isTouch, setIsTouch] = React.useState(false);
 
   const value = searchParam.get('directoryId') || null;
-  const { directories = [] } = useLoaderData<{ directories: any[] }>(); // Todo: fix type
-  //   const { data: directories } = trpc.directories.list.useQuery();
+  const { directories } = useLoaderData<LoadingBatchTasksBackend['load']>();
 
   function handleChange(id: string | null) {
     setSearchParam((prev) => {

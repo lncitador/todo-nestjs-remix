@@ -17,11 +17,23 @@ export class TasksPrismaRepository
   public async findByUserId({
     userId,
     directoryId,
+    sort,
+    q,
   }: FindTasksByUserId): Promise<Either<Error, TaskEntity[]>> {
     try {
       const tasks = await this.prisma.todos
         .findMany({
-          where: { userId, directoryId },
+          where: { userId, directoryId, title: { contains: q } },
+          orderBy: {
+            ...(sort === 'order-added' && { createdAt: 'desc' }),
+            ...(sort === 'uncompleted-first' && { completed: 'asc' }),
+            ...(sort === 'completed-first' && { completed: 'desc' }),
+            ...(sort === 'max-date' && { dueDate: 'desc' }),
+            ...(sort === 'min-date' && { dueDate: 'asc' }),
+          },
+          include: {
+            Directory: true,
+          },
         })
         .then((tasks) => TaskEntity.from(tasks));
 
@@ -43,7 +55,14 @@ export class TasksPrismaRepository
       }
 
       await this.prisma.todos.create({
-        data: validate.value,
+        data: {
+          title: validate.value.title,
+          description: validate.value.description,
+          completed: validate.value.completed,
+          dueDate: validate.value.dueDate,
+          userId: validate.value.userId,
+          directoryId: validate.value.directoryId,
+        },
       });
 
       return right(validate.value as A);
@@ -65,7 +84,12 @@ export class TasksPrismaRepository
 
       await this.prisma.todos.update({
         where: { id },
-        data: task.value,
+        data: {
+          title: task.value.title,
+          description: task.value.description,
+          completed: task.value.completed,
+          dueDate: task.value.dueDate,
+        },
       });
 
       return right(task.value as A);

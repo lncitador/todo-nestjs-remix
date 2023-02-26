@@ -1,5 +1,6 @@
 import { Body, Injectable } from '@nestjs/common';
-import { ActionArgs, json, redirect } from '@remix-run/node';
+import { ActionArgs, redirect } from '@remix-run/node';
+import { typedjson as json } from 'remix-typedjson';
 import { Action, Loader, RemixArgs } from 'nest-remix';
 import { isTheme, Theme } from '~/app/contexts/theme';
 import { getThemeSession } from '~/app/utils/theme.server';
@@ -29,7 +30,6 @@ export class SetThemeBackend {
 
   @Loader()
   public async notEnabled() {
-    console.log('not enabled');
     return redirect('/', { status: 404 });
   }
 }

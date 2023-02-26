@@ -1,5 +1,6 @@
 import { Body, Injectable } from '@nestjs/common';
-import { ActionArgs, json } from '@remix-run/node';
+import { ActionArgs } from '@remix-run/node';
+import { typedjson as json } from 'remix-typedjson';
 import { Action, Loader, RemixArgs } from 'nest-remix';
 import { DirectoryDto } from '~/libs/zod';
 import { DirectoryNotFoundError } from '../domain/errors/directory-not-found.error';

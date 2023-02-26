@@ -1,9 +1,9 @@
 import { Dialog } from '@headlessui/react';
-import { Form, useLoaderData, useLocation, useParams } from '@remix-run/react';
+import { Form, useLocation, useParams } from '@remix-run/react';
+import { useTypedLoaderData as useLoaderData } from 'remix-typedjson';
 import { X } from 'phosphor-react';
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Directory, Todos as Task } from '~/libs/prisma';
 import { Button } from '../Button';
 // import { toast } from 'react-toastify';
 import {
@@ -12,16 +12,15 @@ import {
   SelectField,
   CheckboxField,
 } from '../FormFields';
+import { LoadingBatchTasksBackend } from '~/modules/tasks/server/loading-batch-tasks.server';
 
 export const EditTaskModal: React.FC = () => {
   const params = useParams();
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
 
-  const { task, directories } = useLoaderData<{
-    task: Task;
-    directories: Directory[];
-  }>();
+  const { tasks, directories } =
+    useLoaderData<LoadingBatchTasksBackend['load']>();
 
   //   const { data: task } = trpc.todos.getById.useQuery({ id: params.id! });
   //   const { data: directories } = trpc.directories.list.useQuery();

@@ -9,7 +9,8 @@ type ListTasksProps = {
 
 export const ListTasks: React.NamedExoticComponent<ListTasksProps> = memo(
   ({ tasks }) => {
-    const [listView, toggleNewTask] = useStore((state) => state.useListView);
+    const [listView] = useStore((state) => state.useListView);
+    const [, toggleNewTask] = useStore((state) => state.useNewTaskModal);
 
     // const { mutate: updateTodo } = trpc.todos.update.useMutation();
     // const { mutate: deleteTodo } = trpc.todos.deteteById.useMutation();

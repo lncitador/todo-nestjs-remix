@@ -1,4 +1,8 @@
-import { json, LinksFunction, LoaderArgs, MetaFunction } from '@remix-run/node';
+import { LinksFunction, LoaderArgs, MetaFunction } from '@remix-run/node';
+import {
+  typedjson as json,
+  useTypedLoaderData as useLoaderData,
+} from 'remix-typedjson';
 import {
   Links,
   LiveReload,
@@ -6,7 +10,6 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLoaderData,
 } from '@remix-run/react';
 import {
   useTheme,

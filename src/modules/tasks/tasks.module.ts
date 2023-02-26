@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { tasksRepositoryProvider } from './providers';
+import { AllTasksBackend } from './server/all-tasks.server';
 import { LoadingBatchTasksBackend } from './server/loading-batch-tasks.server';
 import { SortTasksBackend } from './server/sort-tasks.server';
 
@@ -8,6 +9,7 @@ import { SortTasksBackend } from './server/sort-tasks.server';
     tasksRepositoryProvider,
     LoadingBatchTasksBackend,
     SortTasksBackend,
+    AllTasksBackend,
   ],
   exports: [tasksRepositoryProvider],
 })

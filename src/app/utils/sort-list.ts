@@ -1,10 +1,12 @@
+export type SortValue =
+  | 'order-added'
+  | 'min-date'
+  | 'max-date'
+  | 'completed-first'
+  | 'uncompleted-first';
+
 export type SortItem = {
-  value:
-    | 'order-added'
-    | 'min-date'
-    | 'max-date'
-    | 'completed-first'
-    | 'uncompleted-first';
+  value: SortValue;
   title: string;
 };
 

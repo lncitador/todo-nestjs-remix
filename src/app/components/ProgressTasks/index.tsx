@@ -1,9 +1,10 @@
-import { useLoaderData } from '@remix-run/react';
+import { useTypedLoaderData as useLoaderData } from 'remix-typedjson';
 import React from 'react';
+import { LoadingBatchTasksBackend } from '~/modules/tasks/server/loading-batch-tasks.server';
 
 export const ProgressTasks: React.FC = () => {
   //   const [searchParam] = useSearchParams();
-  const { tasks = [] } = useLoaderData<{ tasks: any[] }>(); // Todo: type this
+  const { tasks } = useLoaderData<LoadingBatchTasksBackend['load']>(); // Todo: type this
 
   //   const directoryId = searchParam.get('directoryId');
   //   const query = searchParam.get('q');

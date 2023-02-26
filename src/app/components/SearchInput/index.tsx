@@ -4,28 +4,14 @@ import { MagnifyingGlass, X } from 'phosphor-react';
 import _uniqBy from 'lodash/uniqBy';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDebounce } from '~/app/hooks/useDebounce';
-import { useLoaderData } from '@remix-run/react';
-import { Todos as Task } from '~/libs/prisma';
+import { useTypedLoaderData as useLoaderData } from 'remix-typedjson';
+import { LoadingBatchTasksBackend } from '~/modules/tasks/server/loading-batch-tasks.server';
 
 export const SearchInput: React.FC = () => {
   const navigate = useNavigate();
   const [searchParam, setSearchParam] = useSearchParams();
-  //   const directoryId = searchParam.get('directoryId');
 
-  const { tasks } = useLoaderData<{ tasks: Task[] }>(); // Todo: type this
-
-  const [query, setQuery] = useState('');
-
-  //   const { data: tasks } = trpc.todos.getByUser.useQuery(
-  //     {
-  //       sortBy: 'order-added',
-  //       directoryId,
-  //       query,
-  //     },
-  //     {
-  //       enabled: query.length > 3,
-  //     },
-  //   );
+  const { tasks } = useLoaderData<LoadingBatchTasksBackend['load']>(); // Todo: type this
 
   const [searchTerm, setSearchTerm] = useState(() => {
     return searchParam.get('q') || '';
@@ -38,7 +24,19 @@ export const SearchInput: React.FC = () => {
   const queryTerm = useDebounce(searchTerm);
 
   React.useEffect(() => {
-    setQuery(queryTerm);
+    if (queryTerm) {
+      setSearchParam((prev) => {
+        prev.set('q', queryTerm);
+
+        return prev;
+      });
+    } else {
+      setSearchParam((prev) => {
+        prev.delete('q');
+
+        return prev;
+      });
+    }
   }, [queryTerm]);
 
   return (
@@ -69,7 +67,7 @@ export const SearchInput: React.FC = () => {
             });
           }}
         >
-          {query.length > 3 ? (
+          {queryTerm.length > 3 ? (
             <X className="absolute w-4 text-base sm:w-5 sm:text-xl right-4 top-3.5 text-slate-400" />
           ) : (
             <MagnifyingGlass className="absolute w-4 text-base sm:w-5 sm:text-xl right-4 top-3.5 text-slate-400" />

@@ -1,7 +1,7 @@
 import { Pencil, UserCircle } from 'phosphor-react';
 import { SwitchTheme } from '../components/SwitchTheme';
 import { firstLastName } from '../utils/first-last-name';
-import { useLoaderData } from '@remix-run/react';
+import { useTypedLoaderData as useLoaderData } from 'remix-typedjson';
 import { Button } from '../components/Button';
 import { ProgressTasks } from '../components/ProgressTasks';
 

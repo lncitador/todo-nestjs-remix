@@ -5,7 +5,7 @@ import { Actions } from './Actions';
 import { Content } from './Content';
 
 type TaskProps = {
-  task: Todos & { directory: { name: string } };
+  task: Todos & { Directory: { name: string } };
   index: number;
   listView: 'list' | 'grid';
 };
@@ -30,7 +30,7 @@ export const Task: React.FC<TaskProps> = ({ task, index, listView }) => {
             dark:bg-slate-700 dark:text-slate-200 block hover:bg-rose-300 dark:hover:bg-rose-500
         `}
       >
-        {task.directory.name}
+        {task.Directory.name}
       </button>
       <article
         className={`

@@ -1,4 +1,8 @@
 import { TodosModel } from '~/libs/zod';
+import {
+  DirectoryEntity,
+  DirectoryEntityProps,
+} from '~/modules/directories/domain/entities/directory.entity';
 import { BaseEntity } from '~/shared/domain/base/entity';
 import { Either, left, Maybe, right } from '~/shared/domain/logic';
 import { CreateTaskError } from '../errors/create-task.error';
@@ -12,6 +16,7 @@ export interface TaskEntityProps {
   dueDate: Date;
   userId: string;
   directoryId: string;
+  Directory?: DirectoryEntityProps;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -25,6 +30,7 @@ export class TaskEntity extends BaseEntity implements TaskEntityProps {
   public dueDate: Date;
   public userId: string;
   public directoryId: string;
+  public Directory?: DirectoryEntity;
   public createdAt: Date;
   public updatedAt: Date;
 
@@ -39,6 +45,7 @@ export class TaskEntity extends BaseEntity implements TaskEntityProps {
     this.dueDate = props.dueDate;
     this.userId = props.userId;
     this.directoryId = props.directoryId;
+    this.Directory = props.Directory && DirectoryEntity.from(props.Directory);
     this.createdAt = props.createdAt || new Date();
     this.updatedAt = props.updatedAt || new Date();
   }

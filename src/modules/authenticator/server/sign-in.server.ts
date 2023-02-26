@@ -1,5 +1,6 @@
 import { Body, Injectable } from '@nestjs/common';
-import { ActionArgs, json, redirect } from '@remix-run/node';
+import { ActionArgs, redirect } from '@remix-run/node';
+import { typedjson as json } from 'remix-typedjson';
 import { randomUUID } from 'crypto';
 import { Action, RemixArgs } from 'nest-remix';
 import { z } from 'nestjs-zod/z';
@@ -27,8 +28,6 @@ export class SignInBackend {
     @Body() body: SessionType,
     @RemixArgs() { request }: ActionArgs,
   ) {
-    const senha = await this.encryptPassword.encrypt('Asdf1234!');
-    console.log(senha);
     const validate = await SessionSchema.safeParseAsync(body);
 
     if (validate.success === false) {

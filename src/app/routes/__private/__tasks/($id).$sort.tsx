@@ -1,8 +1,8 @@
 import { LoaderFunction } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
+import { useTypedLoaderData as useLoaderData } from 'remix-typedjson';
 import { wireLoader } from 'nest-remix/core.server';
 import React from 'react';
-import { SortTasksBackend } from './($id).$sort.server';
+import { SortTasksBackend } from '~/modules/tasks/server/sort-tasks.server';
 
 type DataFunction = SortTasksBackend['sortTasks'];
 
