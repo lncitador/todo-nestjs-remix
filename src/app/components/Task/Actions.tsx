@@ -1,5 +1,5 @@
 import { Todos as Task } from '@prisma/client';
-import { NavLink, useLocation } from '@remix-run/react';
+import { NavLink, useFetcher, useLocation } from '@remix-run/react';
 import { DotsThreeOutlineVertical, Star, Trash } from 'phosphor-react';
 import React from 'react';
 
@@ -11,9 +11,12 @@ interface ActionsProps {
 
 export const Actions: React.FC<ActionsProps> = ({ task, index, listView }) => {
   const location = useLocation();
+  const fetcher = useFetcher();
 
   return (
-    <div
+    <fetcher.Form
+      method="patch"
+      action={`/tasks/${task.id}`}
       className={`
             flex border-dashed border-slate-200 dark:border-slate-700/[.3]
             ${
@@ -26,6 +29,8 @@ export const Actions: React.FC<ActionsProps> = ({ task, index, listView }) => {
     >
       <button
         title="Mark as completed"
+        name="action"
+        value="completed"
         className={`
             mr-4 rounded-full font-medium
             ${listView === 'list' ? '' : 'order-0'}
@@ -35,11 +40,6 @@ export const Actions: React.FC<ActionsProps> = ({ task, index, listView }) => {
                 : 'bg-amber-200 text-amber-800'
             }
         `}
-        onClick={() => {
-          //   handleUpdate(task.id, {
-          //     completed: !task.completed,
-          //   });
-        }}
       >
         <span className="absolute invisible block px-3 py-1 sm:static sm:visible">
           {task.completed ? 'completed' : 'uncompleted'}
@@ -47,6 +47,8 @@ export const Actions: React.FC<ActionsProps> = ({ task, index, listView }) => {
       </button>
       <button
         title="Mark as important"
+        name="action"
+        value="important"
         className={`
             transition ml-auto
             ${
@@ -56,11 +58,6 @@ export const Actions: React.FC<ActionsProps> = ({ task, index, listView }) => {
             }
             ${task.important ? 'text-rose-500 hover:text-rose-400' : ''}
         `}
-        onClick={() => {
-          //   handleUpdate(task.id, {
-          //     important: !task.important,
-          //   });
-        }}
       >
         <Star
           className="w-5 h-5 sm:w-6 sm:h-6"
@@ -69,13 +66,12 @@ export const Actions: React.FC<ActionsProps> = ({ task, index, listView }) => {
       </button>
       <button
         title="Delete task"
+        name="action"
+        value="delete"
         className={`
             transition ml-2
             ${index === 0 ? 'text-slate-100 hover:text-slate-300' : ''}
         `}
-        onClick={() => {
-          //   handleDelete(task.id);
-        }}
       >
         <Trash className="w-5 h-5 sm:w-6 sm:h-6" weight="fill" />
       </button>
@@ -95,6 +91,6 @@ export const Actions: React.FC<ActionsProps> = ({ task, index, listView }) => {
           weight="fill"
         />
       </NavLink>
-    </div>
+    </fetcher.Form>
   );
 };

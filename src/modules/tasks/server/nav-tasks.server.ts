@@ -1,8 +1,8 @@
-import { Injectable, Query } from '@nestjs/common';
-import { LoaderArgs, redirect } from '@remix-run/node';
+import { Body, Injectable, Query } from '@nestjs/common';
+import { ActionArgs, LoaderArgs, redirect } from '@remix-run/node';
 import { typedjson as json } from 'remix-typedjson';
 import { Params } from '@remix-run/react';
-import { Loader, RemixArgs } from 'nest-remix';
+import { Action, Loader, RemixArgs } from 'nest-remix';
 import { isUUIDv4 } from '~/app/utils/isUUIDv4';
 import { hasValidPath, NavValue } from '~/app/utils/links';
 import { SortValue } from '~/app/utils/sort-list';
@@ -110,6 +110,57 @@ export class NavTasksBackend {
       task: null,
       tasks: tasksBy.value,
     });
+  }
+
+  @Action.Patch()
+  public async updateTask(
+    @RemixArgs() { params, request }: ActionArgs,
+    @Body() body: { action: 'completed' | 'important' | 'delete' },
+  ) {
+    this.logger.debug('Updating task...');
+
+    const cookieHeader = request.headers.get('Cookie');
+    const { id: userId } = await this.authenticatorManager.currentUser(
+      cookieHeader,
+    );
+
+    const id = isUUIDv4(params.nav as string) ? params.nav : params.id;
+
+    const task = await this.tasksRepository.findById<TaskNotFoundError>(
+      id as string,
+    );
+
+    if (task.isLeft()) {
+      this.logger.debug(JSON.stringify(task.value));
+
+      throw redirect('/', {
+        statusText: 'Ooops something went wrong',
+      });
+    }
+
+    if (task.value.userId !== userId) {
+      throw redirect('/', {
+        statusText: 'This task does not belong to you',
+      });
+    }
+
+    switch (body.action) {
+      case 'completed':
+        await this.tasksRepository.update(task.value.id, {
+          completed: !task.value.completed,
+        });
+        break;
+      case 'important':
+        await this.tasksRepository.update(task.value.id, {
+          important: !task.value.important,
+        });
+        break;
+      case 'delete':
+        await this.tasksRepository.delete(task.value.id);
+        break;
+    }
+
+    return json({ status: 'ok' });
   }
 
   private validateParams(params: Params<string>) {
