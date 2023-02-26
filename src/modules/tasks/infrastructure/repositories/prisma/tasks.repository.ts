@@ -1,3 +1,4 @@
+import { SortValue } from '~/app/utils/sort-list';
 import { Prisma } from '~/libs/prisma';
 import { TaskEntity } from '~/modules/tasks/domain/entities/task.entity';
 import { CreateTaskError } from '~/modules/tasks/domain/errors/create-task.error';
@@ -14,6 +15,118 @@ export class TasksPrismaRepository
   extends PrismaRepository
   implements ITasksRepository
 {
+  public async findByUserIdToday({
+    userId,
+    directoryId,
+    sort,
+    q,
+  }: FindTasksByUserId): Promise<Either<Error, TaskEntity[]>> {
+    try {
+      const tasks = await this.prisma.todos
+        .findMany({
+          where: {
+            userId,
+            directoryId,
+            dueDate: {
+              gte: new Date(new Date().setHours(0, 0, 0, 0)),
+              lte: new Date(new Date().setHours(23, 59, 59, 999)),
+            },
+            title: { contains: q },
+          },
+          orderBy: this.getOrderBy(sort),
+          include: {
+            Directory: true,
+          },
+        })
+        .then((tasks) => TaskEntity.from(tasks));
+
+      return right(tasks);
+    } catch (error) {
+      return left(new TaskNotFoundError(userId));
+    }
+  }
+  public async findByUserIdImportant({
+    userId,
+    directoryId,
+    sort,
+    q,
+  }: FindTasksByUserId): Promise<Either<Error, TaskEntity[]>> {
+    try {
+      const tasks = await this.prisma.todos
+        .findMany({
+          where: {
+            userId,
+            directoryId,
+            important: true,
+            title: { contains: q },
+          },
+          orderBy: this.getOrderBy(sort),
+          include: {
+            Directory: true,
+          },
+        })
+
+        .then((tasks) => TaskEntity.from(tasks));
+
+      return right(tasks);
+    } catch (error) {
+      return left(new TaskNotFoundError(userId));
+    }
+  }
+  public async findByUserIdCompleted({
+    userId,
+    directoryId,
+    sort,
+    q,
+  }: FindTasksByUserId): Promise<Either<Error, TaskEntity[]>> {
+    try {
+      const tasks = await this.prisma.todos
+        .findMany({
+          where: {
+            userId,
+            directoryId,
+            completed: true,
+            title: { contains: q },
+          },
+          orderBy: this.getOrderBy(sort),
+          include: {
+            Directory: true,
+          },
+        })
+        .then((tasks) => TaskEntity.from(tasks));
+
+      return right(tasks);
+    } catch (error) {
+      return left(new TaskNotFoundError(userId));
+    }
+  }
+  public async findByUserIdUncompleted({
+    userId,
+    directoryId,
+    sort,
+    q,
+  }: FindTasksByUserId): Promise<Either<Error, TaskEntity[]>> {
+    try {
+      const tasks = await this.prisma.todos
+        .findMany({
+          where: {
+            userId,
+            directoryId,
+            completed: false,
+            title: { contains: q },
+          },
+          orderBy: this.getOrderBy(sort),
+          include: {
+            Directory: true,
+          },
+        })
+        .then((tasks) => TaskEntity.from(tasks));
+
+      return right(tasks);
+    } catch (error) {
+      return left(new TaskNotFoundError(userId));
+    }
+  }
   public async findByUserId({
     userId,
     directoryId,
@@ -24,13 +137,7 @@ export class TasksPrismaRepository
       const tasks = await this.prisma.todos
         .findMany({
           where: { userId, directoryId, title: { contains: q } },
-          orderBy: {
-            ...(sort === 'order-added' && { createdAt: 'desc' }),
-            ...(sort === 'uncompleted-first' && { completed: 'asc' }),
-            ...(sort === 'completed-first' && { completed: 'desc' }),
-            ...(sort === 'max-date' && { dueDate: 'desc' }),
-            ...(sort === 'min-date' && { dueDate: 'asc' }),
-          },
+          orderBy: this.getOrderBy(sort),
           include: {
             Directory: true,
           },
@@ -151,5 +258,24 @@ export class TasksPrismaRepository
 
   public async count?(): Promise<number> {
     return this.prisma.todos.count();
+  }
+
+  private getOrderBy(
+    sort?: SortValue,
+  ): Prisma.Enumerable<Prisma.TodosOrderByWithRelationInput> | undefined {
+    switch (sort) {
+      case 'order-added':
+        return { createdAt: 'desc' };
+      case 'completed-first':
+        return { completed: 'desc' };
+      case 'uncompleted-first':
+        return { completed: 'asc' };
+      case 'max-date':
+        return { dueDate: 'desc' };
+      case 'min-date':
+        return { dueDate: 'asc' };
+      default:
+        return { createdAt: 'desc' };
+    }
   }
 }

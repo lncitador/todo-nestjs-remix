@@ -28,3 +28,5 @@ export const hasValidPath = (path: string) => {
     return links.some((link) => link.path === `/${path}`);
   }
 };
+
+export type NavValue = 'today' | 'important' | 'completed' | 'uncompleted';

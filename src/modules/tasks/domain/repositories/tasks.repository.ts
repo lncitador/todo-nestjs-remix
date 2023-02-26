@@ -14,4 +14,20 @@ export abstract class ITasksRepository extends BaseRepository<TaskEntity> {
   public abstract findByUserId(
     inputs: FindTasksByUserId,
   ): Promise<Either<Error, TaskEntity[]>>;
+
+  public abstract findByUserIdToday(
+    inputs: FindTasksByUserId,
+  ): Promise<Either<Error, TaskEntity[]>>;
+
+  public abstract findByUserIdImportant(
+    inputs: FindTasksByUserId,
+  ): Promise<Either<Error, TaskEntity[]>>;
+
+  public abstract findByUserIdCompleted(
+    inputs: FindTasksByUserId,
+  ): Promise<Either<Error, TaskEntity[]>>;
+
+  public abstract findByUserIdUncompleted(
+    inputs: FindTasksByUserId,
+  ): Promise<Either<Error, TaskEntity[]>>;
 }
