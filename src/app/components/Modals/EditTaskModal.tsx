@@ -83,7 +83,7 @@ export const EditTaskModal: React.FC = () => {
             label="Date"
             placeholder="e.g, 2021-12-31"
             type="date"
-            defaultValue={task.dueDate.toISOString().split('T')[0]}
+            defaultValue={task.dueDate.toJSON().split('T')[0]}
             fullWidth
           />
           <TextAreaField

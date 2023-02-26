@@ -36,13 +36,11 @@ export function SelectField({
       <label htmlFor={inputId} className={placeholder ? '' : 'sr-only'}>
         {label}
       </label>
-      <Listbox>
+      <Listbox name={name} defaultValue={defaultValue}>
         <div className="relative ">
           <Listbox.Button
             {...props}
             id={inputId}
-            name={name}
-            defaultValue={defaultValue}
             className={`
                   text-left
               ${
@@ -75,10 +73,7 @@ export function SelectField({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Listbox.Options
-              defaultValue={defaultValue}
-              className="absolute z-10 w-full mt-1 overflow-auto text-base bg-white rounded-md shadow-lg dark:bg-slate-900 max-h-60 focus:outline-none sm:text-sm"
-            >
+            <Listbox.Options className="absolute z-10 w-full mt-1 overflow-auto text-base bg-white rounded-md shadow-lg dark:bg-slate-900 max-h-60 focus:outline-none sm:text-sm">
               {options.length === 0 && (
                 <Listbox.Option
                   className="relative py-4 pl-3 cursor-pointer select-none"

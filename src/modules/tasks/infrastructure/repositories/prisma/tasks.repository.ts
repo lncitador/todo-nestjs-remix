@@ -196,6 +196,8 @@ export class TasksPrismaRepository
           description: task.value.description,
           completed: task.value.completed,
           dueDate: task.value.dueDate,
+          directoryId: task.value.directoryId,
+          important: task.value.important,
         },
       });
 
