@@ -1,10 +1,14 @@
 {
   "name": "todo-nestjs-remix",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "This is a starter project for NestJS and Remix",
+  "author": "Walaff Fernandes",
   "private": true,
   "license": "UNLICENSED",
+  "engines": {
+    "node": "16.x",
+    "yarn": "1.22.x"
+  },
   "scripts": {
     "build": "concurrently \"npm run build:nest\" \"npm run build:remix\" -n \"NEST,REMIX\"",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
