@@ -6,10 +6,11 @@
   "private": true,
   "license": "UNLICENSED",
   "engines": {
-    "node": "16.x",
+    "node": "18.x",
     "yarn": "1.22.x"
   },
   "scripts": {
+    "prebuild": "prisma generate",
     "build": "concurrently \"npm run build:nest\" \"npm run build:remix\" -n \"NEST,REMIX\"",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -40,6 +41,8 @@
     "@remix-run/react": "latest",
     "@remix-run/serve": "latest",
     "bcrypt": "^5.1.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
     "clsx": "^1.2.1",
     "date-fns": "^2.29.3",
     "nest-remix": "^0.0.1-alpha6",
