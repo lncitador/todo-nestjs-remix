@@ -10,6 +10,8 @@ import { ILogger } from '~/shared/domain/interfaces/logger.interface';
 import { AuthenticatorProvider } from '~/modules/authenticator/domain/providers/authenticator.provider';
 import { ITasksRepository } from '../domain/repositories/tasks.repository';
 import { TaskNotFoundError } from '../domain/errors/task-not-found.error';
+import { TodosDto } from '~/libs/zod';
+import { TaskEntity } from '../domain/entities/task.entity';
 
 @Injectable()
 export class NavTasksBackend {
@@ -163,21 +165,69 @@ export class NavTasksBackend {
     return json({ status: 'ok' });
   }
 
+  @Action.Post()
+  public async createTask(
+    @RemixArgs() { params, request }: ActionArgs,
+    @Body() body: TodosDto,
+  ) {
+    this.logger.debug('Creating task...');
+    this.validateParams(params);
+
+    const cookieHeader = request.headers.get('Cookie');
+    const { id: userId } = await this.authenticatorManager.currentUser(
+      cookieHeader,
+    );
+
+    const task = TaskEntity.create({
+      title: body.title,
+      description: body.description,
+      directoryId: body.directoryId,
+      completed: !!body.completed,
+      important: !!body.important,
+      dueDate: new Date(body.dueDate),
+      userId,
+    });
+
+    if (task.isLeft()) {
+      this.logger.debug(JSON.stringify(task.value));
+
+      throw redirect('/', {
+        statusText: 'Ooops something went wrong',
+      });
+    }
+
+    // const teste = await task.value.save(this.tasksRepository);
+    await this.tasksRepository.create(task.value);
+
+    return redirect('/', {
+      statusText: 'Task created successfully',
+    });
+  }
+
   private validateParams(params: Params<string>) {
     const navPage = params.nav as string;
     const id = params.id;
 
     if (id) {
-      if (!isUUIDv4(id)) {
-        throw redirect('/');
+      if (!isUUIDv4(id) && id !== 'tasks') {
+        console.log('id 1', id);
+        throw redirect('/', {
+          statusText: 'Ooops something went wrong',
+        });
       }
 
-      if (!hasValidPath(navPage)) {
-        throw redirect('/');
+      if (!hasValidPath(navPage) && id !== 'tasks') {
+        console.log('id 2', id);
+        throw redirect('/', {
+          statusText: 'Ooops something went wrong',
+        });
       }
     } else {
-      if (!isUUIDv4(navPage) && !hasValidPath(navPage)) {
-        throw redirect('/');
+      if (!isUUIDv4(navPage) && !hasValidPath(navPage) && navPage !== 'tasks') {
+        console.log('id 3', navPage);
+        throw redirect('/', {
+          statusText: 'Ooops something went wrong',
+        });
       }
     }
   }

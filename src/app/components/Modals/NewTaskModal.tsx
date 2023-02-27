@@ -1,5 +1,6 @@
 import { Dialog } from '@headlessui/react';
-import { Form, useLoaderData } from '@remix-run/react';
+import { useFetcher } from '@remix-run/react';
+import { useTypedLoaderData as useLoaderData } from 'remix-typedjson';
 // import { toast } from 'react-toastify';
 import { X } from 'phosphor-react';
 import { useStore } from '~/app/hooks/useStore';
@@ -11,37 +12,19 @@ import {
   SelectField,
   CheckboxField,
 } from '../FormFields';
+import React from 'react';
 
 export const NewTaskModal: React.FC = () => {
   const [isOpen, toggle] = useStore((state) => state.useNewTaskModal);
+  const fetcher = useFetcher();
 
   const { directories } = useLoaderData<{ directories: Directory[] }>();
 
-  //   const { data: directories } = trpc.directories.list.useQuery();
-  //   const { mutate } = trpc.todos.create.useMutation();
-
-  //   const methods = useForm<CreateTodoInput>();
-
-  //   const handleSubmit = methods.handleSubmit(
-  //     (data) => {
-  //       const transformdData = {
-  //         ...data,
-  //         dueDate: new Date(data.dueDate),
-  //       };
-
-  //       mutate(transformdData, {
-  //         onSuccess: () => {
-  //           toast.success('Your task as sucessful created!');
-  //           queryClient.invalidateQueries({
-  //             queryKey: trpc.todos.getByUser.getQueryKey(),
-  //           });
-  //           toggle();
-  //         },
-  //         onError: useErrorHandler(methods.setError),
-  //       });
-  //     },
-  //     (err) => console.log(err),
-  //   );
+  React.useEffect(() => {
+    if (fetcher.type === 'done') {
+      toggle();
+    }
+  }, [fetcher.type]);
 
   return (
     <Dialog
@@ -57,7 +40,11 @@ export const NewTaskModal: React.FC = () => {
             <X size={20} />
           </button>
         </Dialog.Title>
-        <Form method="post" className="flex flex-col w-full gap-1 mt-4">
+        <fetcher.Form
+          action="/tasks"
+          method="post"
+          className="flex flex-col w-full gap-1 mt-4"
+        >
           <InputField
             name="title"
             label="Title"
@@ -103,7 +90,7 @@ export const NewTaskModal: React.FC = () => {
           <Button type="submit" className="w-full">
             Add task
           </Button>
-        </Form>
+        </fetcher.Form>
       </Dialog.Panel>
     </Dialog>
   );
