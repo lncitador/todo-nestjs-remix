@@ -20,6 +20,8 @@ import {
 import { getThemeSession } from './utils/theme.server';
 import tailwindcss from './tailwind.css';
 import clsx from 'clsx';
+import { StoreProvider } from './contexts/store';
+import { getStoreSession } from './utils/store.server';
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
@@ -33,9 +35,11 @@ export const links: LinksFunction = () => [
 
 export const loader = async ({ request }: LoaderArgs) => {
   const themeSession = await getThemeSession(request);
+  const storeSession = await getStoreSession(request);
 
   return json({
     theme: themeSession.getTheme(),
+    store: storeSession.state,
   });
 };
 
@@ -62,11 +66,13 @@ function App() {
 }
 
 export default function AppWithProviders() {
-  const data = useLoaderData<typeof loader>();
+  const { store, theme } = useLoaderData<typeof loader>();
 
   return (
-    <ThemeProvider specifiedTheme={data.theme}>
-      <App />
+    <ThemeProvider specifiedTheme={theme}>
+      <StoreProvider store={store}>
+        <App />
+      </StoreProvider>
     </ThemeProvider>
   );
 }

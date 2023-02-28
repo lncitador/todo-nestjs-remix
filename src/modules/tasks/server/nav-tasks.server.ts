@@ -210,21 +210,18 @@ export class NavTasksBackend {
 
     if (id) {
       if (!isUUIDv4(id) && id !== 'tasks') {
-        console.log('id 1', id);
         throw redirect('/', {
           statusText: 'Ooops something went wrong',
         });
       }
 
       if (!hasValidPath(navPage) && id !== 'tasks') {
-        console.log('id 2', id);
         throw redirect('/', {
           statusText: 'Ooops something went wrong',
         });
       }
     } else {
       if (!isUUIDv4(navPage) && !hasValidPath(navPage) && navPage !== 'tasks') {
-        console.log('id 3', navPage);
         throw redirect('/', {
           statusText: 'Ooops something went wrong',
         });

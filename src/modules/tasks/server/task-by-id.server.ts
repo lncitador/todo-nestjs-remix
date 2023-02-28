@@ -116,8 +116,6 @@ export class TaskByIdBackend {
       },
     );
 
-    console.log(updatedTask);
-
     if (updatedTask.isLeft()) {
       this.logger.debug(JSON.stringify(updatedTask.value));
 

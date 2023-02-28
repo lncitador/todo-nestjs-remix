@@ -63,8 +63,6 @@ export class TaskEntity extends BaseEntity implements TaskEntityProps {
       updatedAt: true,
     }).safeParse(props);
 
-    console.log(validate);
-
     if (validate.success === false) {
       throw left(
         new CreateTaskError(
