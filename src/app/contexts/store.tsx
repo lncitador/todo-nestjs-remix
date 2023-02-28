@@ -1,37 +1,14 @@
 import { useFetcher } from '@remix-run/react';
-import React from 'react';
-import { createContext, ReactNode } from 'react';
-import { SortItem } from '../utils/sort-list';
-
-export interface StoreContextProps {
-  useTotal: [number, (total: number) => void];
-  useSortBy: [SortItem, (item: SortItem) => void];
-  useSideNavModal: [boolean, () => void];
-  useAsideModal: [boolean, () => void];
-  useNewTaskModal: [boolean, () => void];
-  useListView: ['list' | 'grid', () => void];
-  useRememberMe: [{ email?: string }, (email?: string) => void];
-}
-
-export type StoreContextState = {
-  [key in keyof StoreContextProps]: StoreContextProps[key][0];
-};
+import React, { ReactNode } from 'react';
+import { createContext } from 'react';
+import {
+  StoreContextProps,
+  StoreContextState,
+  StoreSessionState,
+} from '~/shared/domain/interfaces/store.interface';
 
 type Action = {
   [key in keyof StoreContextProps]: StoreContextProps[key][1];
-};
-
-export type StoreSession = Pick<
-  StoreContextProps,
-  'useSortBy' | 'useListView' | 'useRememberMe'
->;
-
-export type StoreSessionState = {
-  [key in keyof StoreSession]: StoreSession[key][0];
-};
-
-export type StoreSessionAction = {
-  [key in keyof StoreSession]: StoreSession[key][1];
 };
 
 interface StoreProviderProps {

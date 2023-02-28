@@ -21,7 +21,7 @@ import { getThemeSession } from './utils/theme.server';
 import tailwindcss from './tailwind.css';
 import clsx from 'clsx';
 import { StoreProvider } from './contexts/store';
-import { getStoreSession } from './utils/store.server';
+import { SetStoreBackend } from '~/shared/infrastructure/server/set-store.server';
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
@@ -34,8 +34,9 @@ export const links: LinksFunction = () => [
 ];
 
 export const loader = async ({ request }: LoaderArgs) => {
+  const cookie = request.headers.get('Cookie');
   const themeSession = await getThemeSession(request);
-  const storeSession = await getStoreSession(request);
+  const storeSession = await SetStoreBackend.getSession(cookie);
 
   return json({
     theme: themeSession.getTheme(),
