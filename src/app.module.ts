@@ -5,7 +5,6 @@ import { InfrastructureModule } from './shared/infrastructure/container.module';
 import { AuthenticatorModule } from './modules/authenticator/authenticator.module';
 import { UsersModule } from './modules/users/users.module';
 import { RemixModule } from 'nest-remix';
-import { SetThemeBackend } from './shared/infrastructure/server/set-theme.server';
 import { TasksModule } from './modules/tasks/tasks.module';
 import { DirectoryModule } from './modules/directories/directory.module';
 
@@ -20,8 +19,8 @@ import { DirectoryModule } from './modules/directories/directory.module';
   ],
   publicDir: path.join(process.cwd(), 'public'),
   browserBuildDir: path.join(process.cwd(), 'build/'),
-  providers: [SetThemeBackend],
   exports: [AuthenticatorModule, UsersModule, DirectoryModule],
+  controllers: [],
 })
 export class ApplicationModule {
   public static register({

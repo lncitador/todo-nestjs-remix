@@ -17,11 +17,11 @@ import {
   ThemeBody,
   ThemeProvider,
 } from './contexts/theme';
-import { getThemeSession } from './utils/theme.server';
 import tailwindcss from './tailwind.css';
 import clsx from 'clsx';
 import { StoreProvider } from './contexts/store';
 import { SetStoreBackend } from '~/shared/infrastructure/server/set-store.server';
+import { SetThemeBackend } from '~/shared/infrastructure/server/set-theme.server';
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
@@ -35,7 +35,7 @@ export const links: LinksFunction = () => [
 
 export const loader = async ({ request }: LoaderArgs) => {
   const cookie = request.headers.get('Cookie');
-  const themeSession = await getThemeSession(request);
+  const themeSession = await SetThemeBackend.getSession(cookie);
   const storeSession = await SetStoreBackend.getSession(cookie);
 
   return json({

@@ -29,8 +29,8 @@
     "start:dev:remix": "rimraf build; remix watch"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.11",
-    "@nestjs/common": "^9.0.0",
+    "@headlessui/react": "^1.7.13",
+    "@nestjs/common": "^9.3.9",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
@@ -52,7 +52,7 @@
     "react-dom": "latest",
     "reflect-metadata": "^0.1.13",
     "remix-typedjson": "^0.1.7",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.8.0"
   },
   "devDependencies": {
     "@headlessui/tailwindcss": "^0.1.2",

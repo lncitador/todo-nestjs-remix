@@ -6,7 +6,7 @@ import {
   StoreSessionState,
 } from '~/shared/domain/interfaces/store.interface';
 import { Maybe } from '~/shared/domain/logic';
-import { storage } from '../cookies/store.storage';
+import { storeStorage } from '../storage/store.cookie';
 
 interface Store {
   state: StoreSessionState;
@@ -41,7 +41,7 @@ export class SetStoreBackend {
   }
 
   public static async getSession(cookieHeader: Maybe<string>): Promise<Store> {
-    const session = await storage.getSession(cookieHeader);
+    const session = await storeStorage.getSession(cookieHeader);
 
     const state: StoreSessionState = {
       useRememberMe: JSON.parse(session.get('rememberMe') || '{}'),
@@ -63,7 +63,7 @@ export class SetStoreBackend {
     return {
       state,
       action,
-      commit: () => storage.commitSession(session),
+      commit: () => storeStorage.commitSession(session),
     };
   }
 }
