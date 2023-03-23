@@ -25,12 +25,12 @@ export abstract class BaseEntity {
   }
 
   public async save(repository: BaseRepository<this>): Promise<this> {
-    const entity = await repository.create(this);
+    const [err, data] = await repository.create(this);
 
-    if (entity.isRight()) {
-      return entity.value;
+    if (err) {
+      throw err;
     }
 
-    throw entity.value;
+    return data;
   }
 }

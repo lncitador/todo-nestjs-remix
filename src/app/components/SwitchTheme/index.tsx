@@ -20,7 +20,7 @@ export const SwitchTheme: React.FC = () => {
       </span>
       <div className="flex">
         <div className="mr-2 w-10 h-5 bg-slate-200 rounded-full px-0.5 dark:bg-slate-700/[.3] relative flex items-center dark:justify-end">
-          <div className="absolute w-4 h-4 rounded-full bg-violet-600"></div>
+          <div className="absolute w-4 h-4 rounded-full bg-sky-600"></div>
         </div>
         {mode === 'dark' ? <Sun size={22} /> : <Moon size={22} />}
       </div>

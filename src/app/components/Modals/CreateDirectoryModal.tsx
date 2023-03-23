@@ -21,7 +21,7 @@ export const CreateDirectoryModal: React.FC = () => {
       <div className="w-full px-5 mt-4">
         <button
           onClick={toggle}
-          className="flex items-center justify-center w-full px-5 py-2 border-2 border-dashed rounded-md border-slate-300 dark:border-slate-700 hover:text-violet-500"
+          className="flex items-center justify-center w-full px-5 py-2 border-2 border-dashed rounded-md border-slate-300 dark:border-slate-700 hover:text-sky-500"
         >
           <div className="mr-2">
             <Plus weight="bold" />
@@ -51,7 +51,7 @@ export const CreateDirectoryModal: React.FC = () => {
                 label="Name"
                 name="name"
                 placeholder="My directory"
-                className="dark:bg-slate-900 border-slate-200 dark:border-violet-500"
+                className="dark:bg-slate-900 border-slate-200 dark:border-sky-500"
                 fullWidth
               />
             </div>
@@ -63,7 +63,7 @@ export const CreateDirectoryModal: React.FC = () => {
                 Cancel
               </button>
               <button
-                className="px-4 py-2 text-sm font-medium text-white rounded-md bg-violet-500 hover:bg-violet-600"
+                className="px-4 py-2 text-sm font-medium text-white rounded-md bg-sky-500 hover:bg-sky-600"
                 type="submit"
               >
                 Create

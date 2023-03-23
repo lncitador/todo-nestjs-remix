@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { BaseEntity } from '~/shared/domain/base/entity';
-import { BaseRepository, CreateData } from '~/shared/domain/base/repository';
-import { Either, left, right } from '~/shared/domain/logic';
+import {
+  BaseRepository,
+  CreateData,
+  RepositoryError,
+  RepositoryReturn,
+} from '~/shared/domain/base/repository';
 
 @Injectable()
 export class InMemoryRepository<
   TDto extends BaseEntity,
-  TError = unknown,
-> extends BaseRepository<TDto, TError> {
+> extends BaseRepository<TDto> {
   protected readonly inmemoryData: TDto[];
 
   constructor(private readonly dataMock?: TDto[]) {
@@ -16,65 +19,83 @@ export class InMemoryRepository<
     this.inmemoryData = this.dataMock || [];
   }
 
-  public async create<L = TError, A = TDto>(
+  public async create(
     data: CreateData<TDto>,
-  ): Promise<Either<L, A>> {
-    if (this.dataMock) {
-      return left(
-        new Error(
-          'Se possivel, não use o create para criar novos registros, caso tenha dados mockados,',
-        ) as any,
-      );
-    }
-
+  ): Promise<RepositoryReturn<RepositoryError | Error, TDto>> {
     const entity = {
       id: randomUUID(),
       ...data,
       createdAt: new Date(),
       updatedAt: new Date(),
-    };
+    } as TDto;
 
-    this.inmemoryData.push(entity as any);
+    this.inmemoryData.push(entity);
 
-    return right(entity as any);
+    return [null, entity];
   }
-  public async update<L, A = TDto>(
+
+  public async update(
     id: string,
     data: Partial<TDto>,
-  ): Promise<Either<L, A>> {
-    const index = this.inmemoryData.findIndex((item) => item.id === id);
-
-    if (index >= 0) {
-      data.updatedAt = new Date();
-      this.inmemoryData[index] = { ...this.inmemoryData[index], ...data };
-      return right(this.inmemoryData[index] as any);
-    }
-
-    return left(new Error('Registro não encontrado') as any);
-  }
-  public async findById<L, A = TDto>(id: string): Promise<Either<L, A>> {
+  ): Promise<RepositoryReturn<RepositoryError | Error, TDto>> {
     const entity = this.inmemoryData.find((item) => item.id === id);
 
-    if (entity) {
-      return right(entity as any);
+    if (!entity) {
+      return [new DefaultRepositoryError('Entity not found'), null];
     }
 
-    return left(new Error('Registro não encontrado') as any);
-  }
-  public async findMany<L, A = TDto[]>(): Promise<Either<L, A>> {
-    return right(this.inmemoryData as any);
-  }
-  public async delete<L, A = void>(id: string): Promise<Either<L, A>> {
+    const updatedEntity = {
+      ...entity,
+      ...data,
+    } as TDto;
+
     const index = this.inmemoryData.findIndex((item) => item.id === id);
 
-    if (index >= 0) {
-      this.inmemoryData.splice(index, 1);
-      return right(undefined as any);
+    this.inmemoryData[index] = updatedEntity;
+
+    return [null, updatedEntity];
+  }
+
+  public async findById(
+    id: string,
+  ): Promise<RepositoryReturn<RepositoryError | Error, TDto>> {
+    const entity = this.inmemoryData.find((item) => item.id === id);
+
+    if (!entity) {
+      return [new DefaultRepositoryError('Entity not found'), null];
     }
 
-    return left(new Error('Registro não encontrado') as any);
+    return [null, entity];
   }
-  public async count?(): Promise<number> {
-    return this.inmemoryData.length;
+
+  public async findMany(): Promise<
+    RepositoryReturn<RepositoryError | Error, TDto[]>
+  > {
+    return [null, this.inmemoryData];
+  }
+
+  public async delete(
+    id: string,
+  ): Promise<RepositoryReturn<RepositoryError | Error, void>> {
+    const index = this.inmemoryData.findIndex((item) => item.id === id);
+
+    if (index === -1) {
+      return [new DefaultRepositoryError('Entity not found'), null];
+    }
+
+    this.inmemoryData.splice(index, 1);
+
+    return [null, null as any];
+  }
+  public async count?(): Promise<
+    RepositoryReturn<RepositoryError | Error, number>
+  > {
+    return [null, this.inmemoryData.length];
+  }
+}
+
+class DefaultRepositoryError extends RepositoryError {
+  constructor(message: string) {
+    super(message);
   }
 }

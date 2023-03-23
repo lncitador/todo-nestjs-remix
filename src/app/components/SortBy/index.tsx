@@ -22,7 +22,7 @@ export const SortBy: React.FC = () => {
   }, [sortBy]);
 
   return (
-    <Listbox value={sortBy} onChange={toggle}>
+    <Listbox value={sortBy} defaultValue={sortBy} onChange={toggle}>
       <div className="relative ">
         <Listbox.Button className="w-48 text-left input-style">
           <span className="block truncate">{sortBy.title}</span>
@@ -45,7 +45,7 @@ export const SortBy: React.FC = () => {
                                             py-2 pl-10 pr-4 cursor-pointer select-none relative
                                             ${
                                               selected
-                                                ? 'font-semibold text-violet-600 bg-violet-100 dark:bg-slate-800 dark:text-violet-500'
+                                                ? 'font-semibold text-sky-600 bg-sky-100 dark:bg-slate-800 dark:text-sky-500'
                                                 : ''
                                             }
                                         }`
@@ -62,7 +62,7 @@ export const SortBy: React.FC = () => {
                       {sortItem.title}
                     </span>
                     {selected ? (
-                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-violet-600">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-sky-600">
                         <Check className="w-5 h-5" aria-hidden="true" />
                       </span>
                     ) : null}

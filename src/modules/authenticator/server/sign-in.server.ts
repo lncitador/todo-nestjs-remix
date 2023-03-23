@@ -3,14 +3,14 @@ import { ActionArgs, redirect } from '@remix-run/node';
 import { typedjson as json } from 'remix-typedjson';
 import { randomUUID } from 'crypto';
 import { Action, RemixArgs } from 'nest-remix';
-import { z } from 'nestjs-zod/z';
-import { UserModel } from '~/libs/zod';
+import { UserSchema } from '~/libs/zod';
 import { SessionProvider } from '~/modules/authenticator/domain/providers/session.provider';
 import { IUsersRepository } from '~/modules/users/domain/repositories/users.repository';
 import { IEncryptPassword } from '~/shared/domain/interfaces/encrypt-password.interface';
 import { ILogger } from '~/shared/domain/interfaces/logger.interface';
+import { z } from 'zod';
 
-const SessionSchema = UserModel.pick({ email: true, password: true });
+export const SessionSchema = UserSchema.pick({ email: true, password: true });
 
 type SessionType = z.infer<typeof SessionSchema>;
 
@@ -37,10 +37,10 @@ export class SignInBackend {
       });
     }
 
-    const user = await this.usersRepository.findByEmail(body.email);
+    const [err, user] = await this.usersRepository.findByEmail(body.email);
 
-    if (user.isLeft()) {
-      this.logger.debug(JSON.stringify(user.value));
+    if (err) {
+      this.logger.debug(JSON.stringify(err));
 
       return json({
         message: 'Check your credentials',
@@ -50,7 +50,7 @@ export class SignInBackend {
 
     const passwordMatch = await this.encryptPassword.compare(
       body.password,
-      user.value.password,
+      user.password,
     );
 
     if (!passwordMatch) {
@@ -63,7 +63,7 @@ export class SignInBackend {
     let cookieHeader = request.headers.get('Cookie');
     const session = await this.sessionManager.get(cookieHeader);
 
-    session.set('userId', user.value.id);
+    session.set('userId', user.id);
     session.set('sessionId', randomUUID());
 
     cookieHeader = await this.sessionManager.commit(session);

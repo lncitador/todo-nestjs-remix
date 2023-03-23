@@ -5,21 +5,13 @@ import { InfrastructureModule } from './shared/infrastructure/container.module';
 import { AuthenticatorModule } from './modules/authenticator/authenticator.module';
 import { UsersModule } from './modules/users/users.module';
 import { RemixModule } from 'nest-remix';
-import { TasksModule } from './modules/tasks/tasks.module';
-import { DirectoryModule } from './modules/directories/directory.module';
 
 @Global()
 @RemixModule({
-  imports: [
-    InfrastructureModule,
-    UsersModule,
-    AuthenticatorModule,
-    DirectoryModule,
-    TasksModule,
-  ],
+  imports: [InfrastructureModule, UsersModule, AuthenticatorModule],
   publicDir: path.join(process.cwd(), 'public'),
   browserBuildDir: path.join(process.cwd(), 'build/'),
-  exports: [AuthenticatorModule, UsersModule, DirectoryModule],
+  exports: [AuthenticatorModule, UsersModule],
   controllers: [],
 })
 export class ApplicationModule {

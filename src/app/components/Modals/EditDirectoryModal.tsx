@@ -54,7 +54,7 @@ export const EditDirectoryModal: React.FC = () => {
                 name="name"
                 label="Name"
                 placeholder="Name"
-                className="dark:bg-slate-900 border-slate-200 dark:border-violet-500"
+                className="dark:bg-slate-900 border-slate-200 dark:border-sky-500"
                 defaultValue={currentDirectory?.name}
                 fullWidth
               />

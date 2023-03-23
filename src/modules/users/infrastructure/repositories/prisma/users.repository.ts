@@ -4,8 +4,13 @@ import { CreateUserError } from '~/modules/users/domain/errors/create-user.error
 import { UserByEmailError } from '~/modules/users/domain/errors/user-by-email.error';
 import { UserNotFound } from '~/modules/users/domain/errors/user-not-found.error';
 import { IUsersRepository } from '~/modules/users/domain/repositories/users.repository';
-import { CreateData, UpdateData } from '~/shared/domain/base/repository';
-import { Either, left, right } from '~/shared/domain/logic';
+import { BaseEntity } from '~/shared/domain/base/entity';
+import {
+  CreateData,
+  RepositoryError,
+  RepositoryReturn,
+  UpdateData,
+} from '~/shared/domain/base/repository';
 import { PrismaRepository } from '~/shared/infrastructure/database/prisma/repositories/prisma.repository';
 
 export class UsersPrismaRepository
@@ -14,117 +19,122 @@ export class UsersPrismaRepository
 {
   public async findByEmail(
     email: string,
-  ): Promise<Either<UserByEmailError, UserEntity>> {
-    const userExist = await this.prisma.user.findUnique({ where: { email } });
-
-    if (!userExist) {
-      return left(new UserByEmailError(email));
-    }
-
-    const user = UserEntity.create(userExist);
-
-    if (user.isLeft()) {
-      return left(new UserByEmailError(email));
-    }
-
-    return right(user.value);
-  }
-
-  public async create<
-    L = Prisma.PrismaClientKnownRequestError | CreateUserError,
-    A = UserEntity,
-  >(data: CreateData<UserEntity>): Promise<Either<L, A>> {
+  ): Promise<RepositoryReturn<UserByEmailError, UserEntity>> {
     try {
-      const user = UserEntity.create(data);
-
-      if (user.isLeft()) {
-        return left(user.value as L);
-      }
-
-      await this.prisma.user.create({
-        data: user.value,
+      const attempt = await this.prisma.user.findUnique({
+        where: { email },
       });
 
-      return right(user.value as A);
+      if (!attempt) {
+        return [new UserByEmailError(email), null];
+      }
+
+      const user = UserEntity.from(attempt);
+
+      return [null, user];
     } catch (error) {
-      return left(error as L);
+      return [error as any, null];
     }
   }
 
-  public async update<
-    L = Prisma.PrismaClientKnownRequestError | UserNotFound,
-    A = UserEntity,
-  >(id: string, data: UpdateData<UserEntity>): Promise<Either<L, A>> {
+  public async create(
+    data: CreateData<UserEntity>,
+  ): Promise<RepositoryReturn<RepositoryError, UserEntity>> {
     try {
-      const user = await this.findById(id);
+      const attempt = await this.prisma.user.create({
+        data: {
+          email: data.email,
+          name: data.name,
+          password: data.password,
+          rolesId: data.rolesId,
+        },
+      });
 
-      if (user.isLeft()) return user as Either<L, A>;
+      const user = UserEntity.from(attempt);
 
-      user.value.fill(data);
+      return [null, user];
+    } catch (error) {
+      return [error as any, null];
+    }
+  }
 
-      await this.prisma.user.update({
+  public async update(
+    id: string,
+    data: UpdateData<UserEntity>,
+  ): Promise<RepositoryReturn<RepositoryError, UserEntity>> {
+    try {
+      const attempt = await this.prisma.user.update({
         where: { id },
-        data: user.value,
+        data: {
+          email: data.email,
+          name: data.name,
+          password: data.password,
+          rolesId: data.rolesId,
+        },
       });
 
-      return right(user.value as A);
+      const user = UserEntity.from(attempt);
+
+      return [null, user];
     } catch (error) {
-      return left(error as L);
+      return [error as any, null];
     }
   }
 
-  public async findById<
-    L = Prisma.PrismaClientKnownRequestError | UserNotFound,
-    A = UserEntity,
-  >(id: string): Promise<Either<L, A>> {
+  public async findById(
+    id: string,
+  ): Promise<RepositoryReturn<RepositoryError, UserEntity>> {
     try {
-      const userExist = await this.prisma.user.findUnique({ where: { id } });
+      const attempt = await this.prisma.user.findUnique({
+        where: { id },
+      });
 
-      if (!userExist) {
-        return left(new UserNotFound(id) as L);
+      if (!attempt) {
+        return [new UserNotFound(id), null];
       }
 
-      const user = UserEntity.create(userExist);
+      const user = UserEntity.from(attempt);
 
-      if (user.isLeft()) {
-        return left(user.value as L);
-      }
-
-      return right(user.value as A);
+      return [null, user];
     } catch (error) {
-      return left(error as L);
+      return [error as any, null];
     }
   }
 
-  public async findMany<L, A = UserEntity[]>(): Promise<Either<L, A>> {
+  public async findMany(): Promise<
+    RepositoryReturn<RepositoryError, UserEntity[]>
+  > {
     try {
-      const users = await this.prisma.user
-        .findMany()
-        .then((users) => UserEntity.from(users));
+      const attempt = await this.prisma.user.findMany();
+      const users = UserEntity.from(attempt);
 
-      return right(users as A);
+      return [null, users];
     } catch (error) {
-      return left(error as L);
+      return [error as any, null];
     }
   }
 
-  public async delete<L, A = void>(id: string): Promise<Either<L, A>> {
+  public async delete(
+    id: string,
+  ): Promise<RepositoryReturn<RepositoryError, void>> {
     try {
-      const user = await this.findById(id);
+      await this.prisma.user.delete({
+        where: { id },
+      });
 
-      if (user.isLeft()) return user as Either<L, A>;
-
-      await this.prisma.user.delete({ where: { id } });
-
-      return right({
-        message: 'User deleted successfully',
-      } as A);
+      return [null, {} as any];
     } catch (error) {
-      return left(error as L);
+      return [error as any, null];
     }
   }
 
-  public async count?(): Promise<number> {
-    return this.prisma.user.count();
+  public async count?(): Promise<RepositoryReturn<RepositoryError, number>> {
+    try {
+      const attempt = await this.prisma.user.count();
+
+      return [null, attempt];
+    } catch (error) {
+      return [error as any, null];
+    }
   }
 }

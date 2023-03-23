@@ -1,13 +1,12 @@
-import { BaseRepository } from '~/shared/domain/base/repository';
-import { Either } from '~/shared/domain/logic';
+import {
+  BaseRepository,
+  RepositoryReturn,
+} from '~/shared/domain/base/repository';
 import { UserEntity } from '../entities/user.entity';
 import { UserByEmailError } from '../errors/user-by-email.error';
 
-export abstract class IUsersRepository extends BaseRepository<
-  UserEntity,
-  Error
-> {
+export abstract class IUsersRepository extends BaseRepository<UserEntity> {
   public abstract findByEmail(
     email: string,
-  ): Promise<Either<UserByEmailError, UserEntity>>;
+  ): Promise<RepositoryReturn<UserByEmailError, UserEntity>>;
 }

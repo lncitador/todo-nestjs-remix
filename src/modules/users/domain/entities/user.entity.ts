@@ -1,24 +1,26 @@
-import { UserModel } from '~/libs/zod';
+import { UserSchema } from '~/libs/zod';
 import { BaseEntity } from '~/shared/domain/base/entity';
 import { Either, Maybe, left, right } from '~/shared/domain/logic';
 import { CreateUserError } from '../errors/create-user.error';
 
 export interface UserEntityProps {
-  id?: string;
-  name: string;
+  id: string;
   email: string;
+  name: string;
+  rolesId: Maybe<string>;
   password: string;
-  avatar: Maybe<string>;
-  createdAt?: Date;
-  updatedAt?: Date;
+  rememberMeToken: Maybe<string>;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export class UserEntity extends BaseEntity implements UserEntityProps {
   public readonly id: string;
   public readonly name: string;
   public readonly email: string;
+  public readonly rolesId: Maybe<string>;
   public readonly password: string;
-  public readonly avatar: Maybe<string>;
+  public readonly rememberMeToken: Maybe<string>;
   public readonly createdAt: Date;
   public readonly updatedAt: Date;
 
@@ -29,7 +31,6 @@ export class UserEntity extends BaseEntity implements UserEntityProps {
     this.name = props.name;
     this.email = props.email;
     this.password = props.password;
-    this.avatar = props.avatar;
     this.createdAt = props.createdAt || new Date();
     this.updatedAt = props.updatedAt || new Date();
   }
@@ -43,7 +44,7 @@ export class UserEntity extends BaseEntity implements UserEntityProps {
   }
 
   private static validateProps(props: UserEntityProps) {
-    const validate = UserModel.partial({
+    const validate = UserSchema.partial({
       id: true,
       createdAt: true,
       updatedAt: true,
@@ -61,7 +62,9 @@ export class UserEntity extends BaseEntity implements UserEntityProps {
 
   public static from(props: UserEntityProps): UserEntity;
   public static from(props: UserEntityProps[]): UserEntity[];
-  public static from(props: UserEntityProps | UserEntityProps[]) {
+  public static from(
+    props: UserEntityProps | UserEntityProps[],
+  ): UserEntity | UserEntity[] {
     if (Array.isArray(props)) {
       return props.map((item) => new UserEntity(item));
     }

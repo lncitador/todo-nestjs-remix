@@ -14,7 +14,7 @@ export const ListViewGroup: React.FC = () => {
           value="list"
           className={({ checked }) => `
                 flex items-center justify-center w-8 h-8
-                ${checked ? 'text-violet-600' : ''}
+                ${checked ? 'text-sky-600' : ''}
             `}
         >
           <ListDashes size={24} />
@@ -23,7 +23,7 @@ export const ListViewGroup: React.FC = () => {
           value="grid"
           className={({ checked }) => `
                 flex items-center justify-center w-8 h-8
-                ${checked ? 'text-violet-600' : ''}
+                ${checked ? 'text-sky-600' : ''}
             `}
         >
           <SquaresFour size={24} />
